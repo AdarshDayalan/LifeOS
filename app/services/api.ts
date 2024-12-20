@@ -1,5 +1,7 @@
 import { supabase } from '../lib/supabase';
-import { OPENAI_API_KEY } from '@env';
+import Constants from 'expo-constants';
+
+const OPENAI_API_KEY = Constants.expoConfig?.extra?.openaiApiKey;
 
 class ApiService {
   // Auth related API calls
