@@ -5,8 +5,8 @@ import OpenAI from 'openai';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Initialize OpenAI client
-// const openai = new OpenAI({
-// });
+const openai = new OpenAI({
+});
 
 // Add interface for transcript items
 interface TranscriptItem {
