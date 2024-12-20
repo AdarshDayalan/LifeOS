@@ -9,10 +9,11 @@ interface TranscriptItem {
 
 interface TranscriptsListProps {
   savedTranscripts: TranscriptItem[];
-  setSavedTranscripts: (transcripts: TranscriptItem[]) => void;
+  setSavedTranscripts: React.Dispatch<React.SetStateAction<TranscriptItem[]>>;
+  isDark: boolean;
 }
 
-export default function TranscriptsList({ savedTranscripts, setSavedTranscripts }: TranscriptsListProps) {
+export default function TranscriptsList({ savedTranscripts, setSavedTranscripts, isDark }: TranscriptsListProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
@@ -31,7 +32,7 @@ export default function TranscriptsList({ savedTranscripts, setSavedTranscripts 
     <ScrollView style={{ flex: 1 }}>
       <View style={{ padding: 20 }}>
         <View style={{
-          backgroundColor: '#ffffff',
+          backgroundColor: isDark ? '#2a2a2a' : '#ffffff',
           borderRadius: 15,
           overflow: 'hidden',
         }}>
@@ -41,14 +42,14 @@ export default function TranscriptsList({ savedTranscripts, setSavedTranscripts 
             alignItems: 'center',
             paddingHorizontal: 20,
             paddingVertical: 15,
-            backgroundColor: '#f8f9fa',
+            backgroundColor: isDark ? '#333' : '#f8f9fa',
             borderBottomWidth: 1,
-            borderBottomColor: '#eee',
+            borderBottomColor: isDark ? '#444' : '#eee',
           }}>
             <Text style={{
               fontSize: 18,
               fontWeight: '600',
-              color: '#333',
+              color: isDark ? '#fff' : '#333',
             }}>Previous Recordings</Text>
             <TouchableOpacity
               onPress={clearTranscripts}
@@ -68,19 +69,19 @@ export default function TranscriptsList({ savedTranscripts, setSavedTranscripts 
               style={{
                 padding: 15,
                 borderBottomWidth: 1,
-                borderBottomColor: '#eee',
+                borderBottomColor: isDark ? '#444' : '#eee',
               }}
             >
               <Text style={{
                 fontSize: 12,
-                color: '#666',
+                color: isDark ? '#999' : '#666',
                 marginBottom: 5,
               }}>
                 {formatDate(item.timestamp)}
               </Text>
               <Text style={{
                 fontSize: 16,
-                color: '#333',
+                color: isDark ? '#fff' : '#333',
                 lineHeight: 24,
               }}>
                 {item.text}

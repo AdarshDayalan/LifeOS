@@ -1,53 +1,49 @@
-import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { supabase } from './lib/supabase';
+import { Session } from '@supabase/supabase-js';
+import TabLayout from './TabLayout';
+import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import FirstNameScreen from './screens/FirstNameScreen';
+const Stack = createStackNavigator();
 
-export default function AppLayout() {
+export default function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (isLoading) {
+    return null; // Or a loading spinner
+  }
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopWidth: 1,
-          borderTopColor: '#f0f0f0',
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 85,
-        },
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
-        headerShown: true,
-        headerStyle: {
-          backgroundColor: '#ffffff',
-        },
-        headerStatusBarHeight: 0,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Record",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "mic" : "mic-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="transcripts"
-        options={{
-          title: "History",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "list" : "list-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {session ? (
+        // Authenticated stack
+        <Stack.Screen name="Root" component={TabLayout} />
+      ) : (
+        // Auth stack
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="FirstName" component={FirstNameScreen} />
+        </>
+      )}
+    </Stack.Navigator>
   );
-}
+} 
