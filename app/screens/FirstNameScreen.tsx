@@ -16,7 +16,8 @@ export default function FirstNameScreen({ navigation }: { navigation: any }) {
     <View style={{ 
       flex: 1, 
       padding: 20, 
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
+      paddingTop: '50%',
       backgroundColor: isDark ? '#1a1a1a' : '#ffffff'
     }}>
       <Text style={{ 
@@ -32,6 +33,7 @@ export default function FirstNameScreen({ navigation }: { navigation: any }) {
         placeholder="First Name"
         value={firstName}
         onChangeText={setFirstName}
+        onSubmitEditing={handleContinue}
         style={{
           padding: 15,
           backgroundColor: isDark ? '#2d3748' : '#f7f7f7',
@@ -40,6 +42,7 @@ export default function FirstNameScreen({ navigation }: { navigation: any }) {
           color: isDark ? '#ffffff' : '#000000'
         }}
         autoFocus
+        returnKeyType="done"
       />
 
       <TouchableOpacity

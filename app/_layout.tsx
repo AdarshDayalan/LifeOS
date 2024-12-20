@@ -6,6 +6,7 @@ import TabLayout from './TabLayout';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import FirstNameScreen from './screens/FirstNameScreen';
+import EmailLoginScreen from './screens/EmailLoginScreen';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -40,8 +41,9 @@ export default function App() {
         // Auth stack
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="FirstName" component={FirstNameScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="EmailLogin" component={EmailLoginScreen} />
         </>
       )}
     </Stack.Navigator>
