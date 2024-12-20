@@ -2,12 +2,14 @@ import { Text, View, TouchableOpacity, Alert, useColorScheme } from "react-nativ
 import { Audio } from 'expo-av';
 import { useState, useEffect } from 'react';
 import { useTranscription } from '../hooks/useTranscription';
+import { useTaskProcessor } from '../hooks/useTaskProcessor';
 
 export default function HomeScreen() {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number>(10);
+  const [timeLeft, setTimeLeft] = useState<number>(120);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
-  const { transcribeAudio, isTranscribing, error } = useTranscription();
+  const { transcribeAudio, isTranscribing, transcribeError } = useTranscription();
+  const { processTranscriptToTasks, isProcessingTasks, taskProcessorError } = useTaskProcessor();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -40,7 +42,7 @@ export default function HomeScreen() {
         playsInSilentModeIOS: true,
       });
 
-      setTimeLeft(10);
+      setTimeLeft(120);
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
@@ -61,8 +63,11 @@ export default function HomeScreen() {
       setRecording(null);
 
       if (uri) {
-        const result = await transcribeAudio(uri);
-        Alert.alert('Success', 'Audio transcribed successfully!');
+        const transcriptResult = await transcribeAudio(uri);
+        console.log('Transcript result:', transcriptResult);
+        const tasks = await processTranscriptToTasks(transcriptResult.text);
+        console.log('Tasks:', tasks);
+        Alert.alert('Success', `Transcribed and created ${tasks.length} tasks!`);
       }
     } catch (err: any) {
       Alert.alert('Error', err.message);
@@ -98,12 +103,12 @@ export default function HomeScreen() {
         </Text>
       </TouchableOpacity>
 
-      {isTranscribing && (
+      {(isTranscribing || isProcessingTasks) && (
         <Text style={{ 
           marginTop: 20,
           color: isDark ? '#ffffff' : '#000000'
         }}>
-          Transcribing...
+          {isTranscribing ? 'Transcribing...' : 'Processing tasks...'}
         </Text>
       )}
     </View>

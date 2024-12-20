@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { apiService } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-interface TranscriptItem {
-  text: string;
-  timestamp: string;
-}
+import { TranscriptItem } from '../types';
 
 export const useTranscription = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -15,11 +11,12 @@ export const useTranscription = () => {
     try {
       setIsTranscribing(true);
       setError(null);
-      const result = await apiService.transcribeAudio(audioUri);
       
+      const transcriptionResult = await apiService.transcribeAudio(audioUri);
+
       // Save transcript with timestamp
       const newTranscript: TranscriptItem = {
-        text: result.text,
+        text: transcriptionResult.text,
         timestamp: new Date().toISOString(),
       };
 
@@ -33,7 +30,7 @@ export const useTranscription = () => {
       transcripts.unshift(newTranscript);
       await AsyncStorage.setItem('transcripts', JSON.stringify(transcripts));
 
-      return result;
+      return newTranscript;
     } catch (err: any) {
       setError(err.message);
       throw err;
@@ -45,6 +42,6 @@ export const useTranscription = () => {
   return {
     transcribeAudio,
     isTranscribing,
-    error,
+    transcribeError: error,
   };
 }; 

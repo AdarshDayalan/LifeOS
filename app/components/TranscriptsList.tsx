@@ -1,11 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-interface TranscriptItem {
-  text: string;
-  timestamp: string;
-}
+import { TranscriptItem, TaskItem } from '../types';
 
 interface TranscriptsListProps {
   savedTranscripts: TranscriptItem[];
@@ -86,6 +82,44 @@ export default function TranscriptsList({ savedTranscripts, setSavedTranscripts,
               }}>
                 {item.text}
               </Text>
+              {item.tasks && (
+                <View style={{ marginTop: 10 }}>
+                  <Text style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    color: isDark ? '#fff' : '#333',
+                    marginBottom: 5,
+                  }}>
+                    Tasks:
+                  </Text>
+                  {item.tasks.map((task, taskIndex) => (
+                    <View
+                      key={taskIndex}
+                      style={{
+                        backgroundColor: isDark ? '#374151' : '#f3f4f6',
+                        padding: 10,
+                        borderRadius: 8,
+                        marginBottom: 5,
+                      }}
+                    >
+                      <Text style={{
+                        fontSize: 14,
+                        fontWeight: '600',
+                        color: isDark ? '#fff' : '#333',
+                      }}>
+                        {task.title}
+                      </Text>
+                      <Text style={{
+                        fontSize: 12,
+                        color: isDark ? '#9ca3af' : '#666',
+                        marginTop: 2,
+                      }}>
+                        {task.description}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
           ))}
         </View>

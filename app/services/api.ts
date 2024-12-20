@@ -80,6 +80,37 @@ class ApiService {
   onAuthStateChange(callback: (event: string, session: any) => void) {
     return supabase.auth.onAuthStateChange(callback);
   }
+
+  async transformToTasks(text: string) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{
+          role: "system",
+          content: 'You are a helpful assistant that transforms text into actionable tasks in JSON format. Each task should have a title and description. example: [{"title": "Call Brian", "description": "Call Brian to discuss the project"}, {"title": "Take out the trash", "description": "Take out the trash before 10:00 AM"}]'
+        }, {
+          role: "user",
+          content: `Transform this text into tasks: ${text}`
+        }],
+        temperature: 0.7,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log('Response:', response);
+
+    const result = await response.json();
+    console.log('Result:', result);
+    return result.choices[0].message.content;
+  }
 }
 
 export const apiService = new ApiService(); 
